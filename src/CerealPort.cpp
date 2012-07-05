@@ -44,6 +44,7 @@
 #include <fcntl.h>
 #include <iostream>
 #include <fstream>
+#include <stdexcept>
 
 #include "cereal_port/CerealPort.h"
 
@@ -277,7 +278,7 @@ bool cereal::CerealPort::readLine(std::string * buffer, int timeout)
 
 		// Append the new data to the buffer
       	try{ buffer->append(temp_buffer, ret); }
-        catch(length_error& le)
+        catch(std::length_error& le)
         {
             CEREAL_EXCEPT(cereal::Exception, "buffer filled without reaching end of data stream");
         }
@@ -313,7 +314,7 @@ bool cereal::CerealPort::readBetween(std::string * buffer, char start, char end,
   	
   		// Append the new data to the buffer
   		try{ buffer->append(temp_buffer, ret); }
-        catch(length_error& le)
+        catch(std::length_error& le)
         {
             CEREAL_EXCEPT(cereal::Exception, "buffer filled without reaching end of data stream");
         }
