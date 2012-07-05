@@ -276,7 +276,7 @@ bool cereal::CerealPort::readLine(std::string * buffer, int timeout)
 		if(ret == -1 && errno != EAGAIN && errno != EWOULDBLOCK) CEREAL_EXCEPT(cereal::Exception, "read failed");
 
 		// Append the new data to the buffer
-      	try( buffer->append(temp_buffer, ret); )
+      	try{ buffer->append(temp_buffer, ret); }
         catch(length_error& le)
         {
             CEREAL_EXCEPT(cereal::Exception, "buffer filled without reaching end of data stream");
@@ -312,7 +312,7 @@ bool cereal::CerealPort::readBetween(std::string * buffer, char start, char end,
   		if(ret == -1 && errno != EAGAIN && errno != EWOULDBLOCK) CEREAL_EXCEPT(cereal::Exception, "read failed");
   	
   		// Append the new data to the buffer
-  		try( buffer->append(temp_buffer, ret); )
+  		try{ buffer->append(temp_buffer, ret); }
         catch(length_error& le)
         {
             CEREAL_EXCEPT(cereal::Exception, "buffer filled without reaching end of data stream");
