@@ -291,6 +291,7 @@ bool cereal::CerealPort::readBetween(std::string * buffer, char start, char end,
 	int ret;
 
 	struct pollfd ufd[1];
+	static std::string erased;
 	int retval;
 	ufd[0].fd = fd_;
 	ufd[0].events = POLLIN;
@@ -306,9 +307,23 @@ bool cereal::CerealPort::readBetween(std::string * buffer, char start, char end,
 		if(retval == 0) CEREAL_EXCEPT(cereal::TimeoutException, "timeout reached");
 		
 		if(ufd[0].revents & POLLERR) CEREAL_EXCEPT(cereal::Exception, "error on socket, possibly unplugged");
+
+		// Append erased characters in last iteration
+		if(!erased.empty())
+		{
+	  		try
+	  		{ 
+	  			buffer->append(erased);
+	  			erased.clear();
+	  		}
+	        catch(std::length_error& le)
+	        {
+	            CEREAL_EXCEPT(cereal::Exception, "failed to append erased to buffer");
+	        }
+	    }
 		
-		char temp_buffer[128];
-  		ret = ::read(fd_, temp_buffer, 128);
+		char temp_buffer[3];
+  		ret = ::read(fd_, temp_buffer, 3);
   	
   		if(ret == -1 && errno != EAGAIN && errno != EWOULDBLOCK) CEREAL_EXCEPT(cereal::Exception, "read failed");
   	
@@ -331,6 +346,8 @@ bool cereal::CerealPort::readBetween(std::string * buffer, char start, char end,
 		if(ret > 0)
 		{
 			// If it is there clear everything after it and return
+			erased = buffer->substr(ret+1, buffer->size()-ret-1);
+			//std::cout << "sobra |" << erased << "|\n";
 			buffer->erase(ret+1, buffer->size()-ret-1);
 			return true;
 		}
