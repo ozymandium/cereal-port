@@ -21,6 +21,6 @@ install(TARGETS cereal_port
         LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )
 
-install(DIRECTORY include/cereal_port
+install(DIRECTORY include/cereal_port/
    DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
